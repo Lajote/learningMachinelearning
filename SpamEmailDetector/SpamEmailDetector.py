@@ -100,3 +100,31 @@ def create_prep_dataset(index_path, n_elements):
         X.append(" ".join(mail["subject"]) + " ".join(mail["body"]))
         y.append(label)
     return X,y
+
+#Leemos unicamente un subconjunto de 100 correos electrónicos
+X_train, y_train = create_prep_dataset(index_path, 100)
+X_train
+#Ahora aplicamos la vectorización a los datos
+vectorizer = CountVectorizer()
+X_train = vectorizer.fit_transform(X_train)
+
+print(X_train.toarray())
+print("\nFeatures: ", len(vectorizer.get_feature_names_out()))
+
+# pandas will help us with data visualization
+import pandas as pd
+pd.DataFrame(X_train.toarray(), columns=[vectorizer.get_feature_names_out()])
+
+#Ahora sí, entrenemos nuestro algoritmo
+from sklearn.linear_model import LogisticRegression #usaremos el módulo "LogisticRegression" porque estamos clasificando
+clf = LogisticRegression() #creaos un objeto de tipo LogisticRegression.Este será nuestro ML model
+clf.fit(X_train, y_train) #aplicamos la función "Fit" (refer to ML concepts to know what fitting means) y para hacer fit necesitamos datos de entrada paireados.
+#en este caso, el conjunto de correos X_train,, y el conjunto de clasificaciones "predicciones" de estos correos conocidos.
+
+#Lectura de un conjunto de correos
+#Leemos 150 correos de nuestro conjunto de datos y nos quedamos unicamente con los 50 últimos
+X,y = create_prep_dataset(index_path, 150) #recordemos que create_prep_dataset is basically the function we created to do all that is described between lines 
+X_test = X[100:]
+y_test = y[100:]
+
+#aquí lo que hicimos fue leer 150 elementos y tomar 100 para los tests. 
